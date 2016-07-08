@@ -1,10 +1,9 @@
-
-
 module FMT
 
 using PyPlot
 
 include("fmt_types.jl")
+
 # TODO parametrize this
 function get_cost(pt1,pt2)
     return (norm(pt1-pt2))
@@ -282,7 +281,6 @@ function fmtstar(start_pt::Vector{Float64}, goal_pt::Vector{Float64}, map::Array
                 C[N-1] = C[z] + get_cost(P.points[:,z], P.points[:,N-1])
                 z = N-1
             else
-        #        println("Failed to find goal")
                 C[z] = Inf
             end
             break
