@@ -291,18 +291,14 @@ function fmtstar(start_pt::Vector{Float64}, goal_pt::Vector{Float64}, map::Array
         unshift!(sol,A[sol[1]])
     end
 
-    if(length(sol)==1)
-        C[z] = Inf
-    end
-
     # Clean up: (pop in the reverse order that you pushed)
     for n = N:-1:(N-1)
         for pt in P.neighborhoods[n].inds
             if(pt == n)
             else
                 # always the last point added
-                pop!(P.neighborhoods[pt].inds)
-                pop!(P.neighborhoods[pt].ds)
+      #          pop!(P.neighborhoods[pt].inds)
+      #          pop!(P.neighborhoods[pt].ds)
             end
         end
     end
@@ -310,6 +306,7 @@ function fmtstar(start_pt::Vector{Float64}, goal_pt::Vector{Float64}, map::Array
     P.neighborhoods[N-1] = Neighborhood([N-1],[0.])
 
     i = 2
+    # smooth path and return tighter cost 
     while i < length(sol)
         if(!collision_check(P.points[:,sol[i-1]], P.points[:,sol[i+1]], map)) # Means this point is irrelevant
             splice!(sol, i);
@@ -317,8 +314,16 @@ function fmtstar(start_pt::Vector{Float64}, goal_pt::Vector{Float64}, map::Array
             i+=1
         end
     end
+    cost = C[z]
+    if(C[z] != Inf)
+        cost = 0;
+        for i = 2:length(sol)
+            cost += get_cost(P.points[:,sol[i-1]], P.points[:,sol[i]])
+        end
+    end
+        
 
-    return sol, C[z], H 
+    return sol, cost, H 
 end
 
 
